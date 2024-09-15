@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+
 public class AuctionController {
     private final AuctionService auctionService;
 
@@ -33,6 +34,8 @@ public class AuctionController {
                     return auctionDto;
                 }).collect(Collectors.toList());
     }
+
+
 
     @GetMapping("/auctions/{auctionId}")
     AuctionDTO findAuction(@PathVariable Long auctionId){
@@ -66,13 +69,15 @@ public class AuctionController {
                 }).collect(Collectors.toList());
     }
 
-    @PutMapping("/auctions/borrow/{auctionId}/{companyId}")
-    void borrow(@PathVariable Long auctionId, @PathVariable Long companyId) {
-        auctionService.borrowAuction(auctionId, companyId);
+    @PutMapping("/auctions/borrow/{auctionId}/{employeeNo}")
+    void borrow(@PathVariable Long auctionId, @PathVariable Long employeeNo) {
+        auctionService.borrowAuction(auctionId, employeeNo);
     }
 
-    @PutMapping("/auctions/return/{auctionId}/{companyId}")
-    void return1(@PathVariable Long auctionId, @PathVariable Long companyId) {
-        auctionService.returnAuction(auctionId, companyId);
+    @PutMapping("/auctions/return/{auctionId}/{employeeNo}")
+    void return1(@PathVariable Long auctionId, @PathVariable Long employeeNo) {
+        auctionService.returnAuction(auctionId, employeeNo);
     }
+
+
 }

@@ -10,10 +10,11 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-public class Bid extends AbstractAggregateRoot<Bid>{
+public class Bid extends AbstractAggregateRoot<Bid> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long bidId;
+    private Long bidId; // Use bidId as the primary key
+
     private Double bid;
     private Double buyOutBid;
     private Double startBid;
@@ -22,15 +23,19 @@ public class Bid extends AbstractAggregateRoot<Bid>{
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastBidTime;
     private Date bidDate;
+
+    @Column
+    private Long auctionId; // Reference to the auction in AuctionSystem
+
     @ManyToOne
-    @JsonIgnore  // Prevent circular reference
-    private Auction auction;  // Auction the bid is associated with
+    @JsonIgnore // Prevent circular reference
+    private Auction auction; // Auction the bid is associated with
 
     @ManyToOne
     private Buyer buyer;
 
     @Column
-    @ElementCollection(fetch = FetchType.EAGER, targetClass=Long.class)
+    @ElementCollection(fetch = FetchType.EAGER, targetClass = Long.class)
     private List<Long> auctions = new ArrayList<>();
 
     // Constructors
@@ -47,8 +52,13 @@ public class Bid extends AbstractAggregateRoot<Bid>{
     // Getters and Setters
     public Long getBidId() { return bidId; }
     public void setBidId(Long bidId) { this.bidId = bidId; }
+
+    public Long getAuctionId() { return auctionId; }
+    public void setAuctionId(Long auctionId) { this.auctionId = auctionId; }
+
     public Double getBid() { return bid; }
     public void setBid(Double bid) { this.bid = bid; }
+
     public Double getBuyOutBid() {
         if (this.highestBid != null) {
             return this.highestBid + 80000;
@@ -56,15 +66,20 @@ public class Bid extends AbstractAggregateRoot<Bid>{
         return null;
     }
     public void setBuyOutBid(Double buyOutBid) { this.buyOutBid = buyOutBid; }
+
     public Double getStartBid() { return startBid; }
     public void setStartBid(Double startBid) { this.startBid = startBid; }
+
     public Integer getBidCounts() { return bidCounts; }
     public void setBidCounts(Integer bidCounts) { this.bidCounts = bidCounts; }
+
     public Double getHighestBid() { return highestBid; }
     public void setHighestBid(Double highestBid) { this.highestBid = highestBid; }
-    public List<Long>getAuctions() {return auctions;}
-    public Date getLastBidTime() {return lastBidTime;}
-    public void setLastBidTime(Date lastBidTime) {this.lastBidTime = lastBidTime;}
+
+    public List<Long> getAuctions() { return auctions; }
+
+    public Date getLastBidTime() { return lastBidTime; }
+    public void setLastBidTime(Date lastBidTime) { this.lastBidTime = lastBidTime; }
 
     @Override
     public String toString() {
@@ -93,16 +108,11 @@ public class Bid extends AbstractAggregateRoot<Bid>{
             event.setStartBid(this.getStartBid());
             event.setBidCounts(this.getBidCounts());
             event.setHighestBid(this.getHighestBid());
-            /**
-             * Method to register the event
-             * @param event
-             **/
-            registerEvent(event);
+            registerEvent(event); // Register event
         }
     }
 
     public void returnTo(Long bidId) {
         this.auctions.add(bidId);
     }
-
 }

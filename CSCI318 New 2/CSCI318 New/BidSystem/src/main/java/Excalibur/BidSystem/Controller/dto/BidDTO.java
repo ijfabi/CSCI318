@@ -1,5 +1,7 @@
 package Excalibur.BidSystem.Controller.dto;
 
+import java.util.Date;
+
 public class BidDTO {
     private Long bidId;
     private Double bid;
@@ -7,6 +9,7 @@ public class BidDTO {
     private Double startBid;
     private Integer bidCounts;
     private Double highestBid;
+    private Date lastBidTime;
 
     public Long getBidId() { return bidId; }
     public void setBidId(Long bidId) { this.bidId = bidId; }
@@ -20,4 +23,6 @@ public class BidDTO {
     public void setBidCounts(Integer bidCounts) { this.bidCounts = bidCounts; }
     public Double getHighestBid() { return highestBid; }
     public void setHighestBid(Double highestBid) { this.highestBid = highestBid; }
+    public Date getLastBidTime() {return lastBidTime;}
+    public void setLastBidTime(Date lastBidTime) {this.lastBidTime = lastBidTime;}
 }

@@ -1,18 +1,21 @@
 package Excalibur.RealEstateSystem.Controller;
 
 import Excalibur.RealEstateSystem.Model.RealEstateCo;
+import Excalibur.RealEstateSystem.Model.RealEstateAgent;
 import Excalibur.RealEstateSystem.Repository.RealEstateCoRepository;
+import Excalibur.RealEstateSystem.Repository.RealEstateAgentRepository;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 public class RealEstateCoController {
 
     private final RealEstateCoRepository realEstateCoRepository;
+    private final RealEstateAgentRepository realEstateAgentRepository;
 
-    public RealEstateCoController(RealEstateCoRepository realEstateCoRepository) {
+    public RealEstateCoController(RealEstateCoRepository realEstateCoRepository, RealEstateAgentRepository realEstateAgentRepository) {
         this.realEstateCoRepository = realEstateCoRepository;
+        this.realEstateAgentRepository = realEstateAgentRepository;
     }
 
     @GetMapping("/realEstateCos")
@@ -47,5 +50,14 @@ public class RealEstateCoController {
         RealEstateCo realEstateCo = realEstateCoRepository.findById(companyId)
                 .orElseThrow(() -> new RuntimeException("RealEstateCo not found with id: " + companyId));
         realEstateCoRepository.delete(realEstateCo);
+    }
+
+    // Endpoint to add an agent to a company
+    @PostMapping("/realEstateCos/{companyId}/agents")
+    public RealEstateAgent addAgentToCompany(@PathVariable Long companyId, @RequestBody RealEstateAgent agent) {
+        RealEstateCo company = realEstateCoRepository.findById(companyId)
+                .orElseThrow(() -> new RuntimeException("RealEstateCo not found with id: " + companyId));
+        agent.setRealEstateCo(company);
+        return realEstateAgentRepository.save(agent);
     }
 }

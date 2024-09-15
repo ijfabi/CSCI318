@@ -3,6 +3,7 @@ package Excalibur.AuctionSystem.Controller.dto;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.util.Date;
+import java.util.List;
 
 
 public class AuctionDTO {
@@ -14,6 +15,7 @@ public class AuctionDTO {
     private Date finishDate;
     private Double currentPrice;
     private String status;
+    private List<Long> realEstateAgentIds;
 
     public AuctionDTO() {
     }
@@ -29,5 +31,6 @@ public class AuctionDTO {
     public void setCurrentPrice(Double currentPrice) { this.currentPrice = currentPrice; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    public List<Long> getRealEstateAgentIds() { return realEstateAgentIds; }
+    public void setRealEstateAgentIds(List<Long> realEstateAgentIds) { this.realEstateAgentIds = realEstateAgentIds; }
 }
-

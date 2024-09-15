@@ -88,4 +88,7 @@ public class Auction extends AbstractAggregateRoot<Auction>{
     public void returnTo(long auctionId) {
         this.realEstateAgents.add(auctionId);
     }
+    public void addRealEstateAgent(Long agentId) {
+        this.realEstateAgents.add(agentId);
+    }
 }

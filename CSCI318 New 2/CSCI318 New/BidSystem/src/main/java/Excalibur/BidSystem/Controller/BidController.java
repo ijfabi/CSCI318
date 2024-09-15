@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@RequestMapping("/bids") // Base URL for all bid-related operations
 public class BidController {
 
     private final BidService bidService;
@@ -18,9 +19,9 @@ public class BidController {
         this.bidService = bidService;
     }
 
-
-    @GetMapping("/bids")
-    List<BidDTO> findAllBids() {
+    // Get all bids
+    @GetMapping
+    public List<BidDTO> findAllBids() {
         return bidService.getAllBids()
                 .stream()
                 .map(bid -> {
@@ -31,12 +32,14 @@ public class BidController {
                     bidDto.setStartBid(bid.getStartBid());
                     bidDto.setBidCounts(bid.getBidCounts());
                     bidDto.setHighestBid(bid.getHighestBid());
+                    bidDto.setLastBidTime(bid.getLastBidTime());
                     return bidDto;
                 }).collect(Collectors.toList());
     }
 
-    @GetMapping("/bids/{bidId}")
-    BidDTO getBidById(@PathVariable Long bidId) {
+    // Get a bid by ID
+    @GetMapping("/{bidId}")
+    public BidDTO getBidById(@PathVariable Long bidId) {
         BidDTO bidDto = new BidDTO();
         Bid bid = bidService.getBidById(bidId);
         bidDto.setBidId(bid.getBidId());
@@ -45,13 +48,13 @@ public class BidController {
         bidDto.setStartBid(bid.getStartBid());
         bidDto.setBidCounts(bid.getBidCounts());
         bidDto.setHighestBid(bid.getHighestBid());
+        bidDto.setLastBidTime(bid.getLastBidTime());
         return bidDto;
     }
 
-    @GetMapping("/bids/{bidId}/available")
-    List<AuctionDTO> auctions(@PathVariable Long bidId) {
-
-        //Functional style
+    // Get all auctions associated with a bid
+    @GetMapping("/{bidId}/available")
+    public List<AuctionDTO> auctions(@PathVariable Long bidId) {
         return bidService.getAuctions(bidId)
                 .stream()
                 .map(auction -> {
@@ -67,14 +70,33 @@ public class BidController {
                 }).collect(Collectors.toList());
     }
 
-    @PutMapping("/bids/borrow/{bidId}/{auctionId}")
-    void borrow(@PathVariable Long bidId, @PathVariable Long auctionId) {
+    // Borrow a bid (this method name is a bit unclear, ensure its purpose is well-defined)
+    @PutMapping("/borrow/{bidId}/{auctionId}")
+    public void borrow(@PathVariable Long bidId, @PathVariable Long auctionId) {
         bidService.borrowBid(bidId, auctionId);
     }
 
-    @PutMapping("/bids/return/{bidId}/{auctionId}")
-    void return1(@PathVariable Long bidId, @PathVariable Long auctionId) {
+    // Return a bid
+    @PutMapping("/return/{bidId}/{auctionId}")
+    public void return1(@PathVariable Long bidId, @PathVariable Long auctionId) {
         bidService.returnBid(bidId, auctionId);
     }
 
+    // Link a bid to an auction
+    @PutMapping("/{bidId}/linkAuction/{auctionId}")
+    public BidDTO linkBidToAuction(@PathVariable Long bidId, @PathVariable Long auctionId) {
+        // Call the service to link the bid to the auction
+        Bid bid = bidService.createBid(bidId, auctionId);
+
+        // Map the bid to BidDTO to return the response
+        BidDTO bidDto = new BidDTO();
+        bidDto.setBidId(bid.getBidId());
+        bidDto.setBid(bid.getBid());
+        bidDto.setBuyOutBid(bid.getBuyOutBid());
+        bidDto.setStartBid(bid.getStartBid());
+        bidDto.setBidCounts(bid.getBidCounts());
+        bidDto.setHighestBid(bid.getHighestBid());
+        bidDto.setLastBidTime(bid.getLastBidTime());
+        return bidDto;
+    }
 }

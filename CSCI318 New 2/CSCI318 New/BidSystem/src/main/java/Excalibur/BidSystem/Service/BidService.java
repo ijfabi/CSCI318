@@ -14,19 +14,19 @@ import java.util.List;
 @Service
 public class BidService {
 
-
     private final BidRepository bidRepository;
     private final RestTemplate restTemplate;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     BidService(BidRepository bidRepository, RestTemplate restTemplate,
-               ApplicationEventPublisher applicationEventPublisher){
+               ApplicationEventPublisher applicationEventPublisher) {
         this.bidRepository = bidRepository;
         this.restTemplate = restTemplate;
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    public List<Bid> getAllBids(){ return bidRepository.findAll();
+    public List<Bid> getAllBids() {
+        return bidRepository.findAll();
     }
 
     public Bid getBidById(Long bidId) {
@@ -41,7 +41,7 @@ public class BidService {
     public List<Auction> getAuctions(Long auctionId) {
         final String url = "http://localhost:8080/auctions/";
         List<Auction> auctions = new ArrayList<>();
-        List<Long>  auctionIds = bidRepository.findById(auctionId).orElseThrow(RuntimeException::new)
+        List<Long> auctionIds = bidRepository.findById(auctionId).orElseThrow(RuntimeException::new)
                 .getAuctions();
         for (Long id : auctionIds) {
             auctions.add(restTemplate.getForObject(url + id, Auction.class));
@@ -49,8 +49,22 @@ public class BidService {
         return auctions;
     }
 
+    public Bid createBid(Long bidId, Long auctionId) {
+        // Check if the auction exists in the AuctionSystem
+        final String auctionUrl = "http://localhost:8080/auctions/" + auctionId;
+        Auction auction = restTemplate.getForObject(auctionUrl, Auction.class);
+
+        if (auction != null) {
+            Bid bid = bidRepository.findById(bidId).orElseThrow(() -> new RuntimeException("Bid not found with id: " + bidId));
+            bid.setAuctionId(auctionId); // Link the bid to the auction
+            return bidRepository.save(bid);
+        } else {
+            throw new RuntimeException("Auction not found with id: " + auctionId);
+        }
+    }
+
     public void borrowBid(Long bidId, Long auctionId) {
-        Bid bid = bidRepository.findById(auctionId).orElseThrow(RuntimeException::new);
+        Bid bid = bidRepository.findById(bidId).orElseThrow(RuntimeException::new);
         bid.borrowFrom(bidId);
         bidRepository.save(bid);
     }
@@ -70,6 +84,4 @@ public class BidService {
         event.setAuctionId(auctionId);
         applicationEventPublisher.publishEvent(event);
     }
-
 }
-

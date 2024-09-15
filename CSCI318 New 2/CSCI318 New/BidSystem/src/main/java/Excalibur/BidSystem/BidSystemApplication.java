@@ -34,7 +34,9 @@ public class BidSystemApplication {
 			entry.setCurrentPrice(1500000.00);
 			entry.checkAuctionStatus();
 			auctionRepository.save(entry);
-			System.out.println(auctionRepository.findById(entry.getAuctionId()).orElseThrow());
+			// Ensure the ID is assigned after saving
+			entry = auctionRepository.findById(entry.getAuctionId()).orElseThrow();
+			System.out.println(entry);
 
 			Auction entry1 = new Auction();
 			entry1.setName("10 Lombok St");
@@ -43,7 +45,9 @@ public class BidSystemApplication {
 			entry1.setCurrentPrice(2000000.00);
 			entry1.checkAuctionStatus();
 			auctionRepository.save(entry1);
-			System.out.println(auctionRepository.findById(entry1.getAuctionId()).orElseThrow());
+			// Ensure the ID is assigned after saving
+			entry1 = auctionRepository.findById(entry1.getAuctionId()).orElseThrow();
+			System.out.println(entry1);
 
 			// Insert bids after auctions
 			Bid bidEntry = new Bid();
@@ -53,7 +57,9 @@ public class BidSystemApplication {
 			bidEntry.setBidCounts(1);
 			bidEntry.setHighestBid(1250000.00);
 			bidRepository.save(bidEntry);
-			System.out.println(bidRepository.findById(bidEntry.getBidId()).orElseThrow());
+			// Ensure the ID is assigned after saving
+			bidEntry = bidRepository.findById(bidEntry.getBidId()).orElseThrow();
+			System.out.println(bidEntry);
 
 			Bid bidEntry1 = new Bid();
 			bidEntry1.setBid(1350000.00);
@@ -62,8 +68,11 @@ public class BidSystemApplication {
 			bidEntry1.setBidCounts(2);
 			bidEntry1.setHighestBid(1350000.00);
 			bidRepository.save(bidEntry1);
-			System.out.println(bidRepository.findById(bidEntry1.getBidId()).orElseThrow());
+			// Ensure the ID is assigned after saving
+			bidEntry1 = bidRepository.findById(bidEntry1.getBidId()).orElseThrow();
+			System.out.println(bidEntry1);
 		};
 	}
+
 
 }
